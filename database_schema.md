@@ -775,7 +775,7 @@ CREATE INDEX idx_topic_stats_views ON topic_stats(total_views);
 | is_email_enabled  | BOOLEAN     | Email toggle   |
 | updated_at        | TIMESTAMP   | Updated date   |
 
-```
+```sql
 CREATE TABLE user_email_preferences (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
@@ -811,7 +811,7 @@ Allows users to control which activity types should trigger email notifications,
 | source      | ENUM         | Source            |
 | created_at  | TIMESTAMP    | Created date      |
 
-```
+```sql
 CREATE TABLE report_issue (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id BIGINT NOT NULL,
@@ -848,7 +848,7 @@ This is separate from topic/reply reports and is meant for support and admin han
 | created_at      | TIMESTAMP   | Created date     |
 
 
-```
+```sql
 CREATE TABLE notification_delivery_logs (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     notification_id BIGINT NOT NULL,
@@ -881,7 +881,7 @@ Helps monitor email failures, retries, and debugging notification delivery in pr
 | shared_via  | ENUM        | Platform        |
 | created_at  | TIMESTAMP   | Share date      |
 
-```
+```sql
 CREATE TABLE topic_shares (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     topic_id BIGINT NOT NULL,
@@ -915,7 +915,7 @@ Used to calculate total shares, understand traffic sources, and improve engageme
 | created_at   | TIMESTAMP   | Block date    |
 
 
-```
+```sql
 CREATE TABLE user_blocks (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     blocked_by BIGINT NOT NULL,
@@ -951,7 +951,7 @@ Blocked users’ content, replies, and notifications can be hidden for better co
 | reason      | TEXT        | Action reason    |
 | created_at  | TIMESTAMP   | Created date     |
 
-```
+```sql
 CREATE TABLE moderation_logs (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     admin_id BIGINT NOT NULL,
