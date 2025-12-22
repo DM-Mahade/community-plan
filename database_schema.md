@@ -9,7 +9,7 @@
 
 ### **Table Name**
 
-`users`
+`cm_users`
 
 ### **Schema (Table Format)**
 
@@ -30,7 +30,7 @@
 ### **Query**
 
 ```sql
-CREATE TABLE users (
+CREATE TABLE cm_users (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100),
@@ -76,7 +76,7 @@ CREATE TABLE categories (
     description TEXT,
     created_by BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(id)
+    FOREIGN KEY (created_by) REFERENCES cm_users(id)
 );
 ```
 
@@ -110,7 +110,7 @@ CREATE TABLE tags (
     name VARCHAR(100) UNIQUE NOT NULL,
     created_by BIGINT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(id)
+    FOREIGN KEY (created_by) REFERENCES cm_users(id)
 );
 ```
 
@@ -155,7 +155,7 @@ CREATE TABLE topics (
     best_reply_id BIGINT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES cm_users(id),
     FOREIGN KEY (category_id) REFERENCES categories(id)
 );
 ```
@@ -262,7 +262,7 @@ CREATE TABLE topic_replies (
     is_reported BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics(id),
-    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES cm_users(id),
     FOREIGN KEY (parent_reply_id) REFERENCES topic_replies(id)
 );
 ```
@@ -339,7 +339,7 @@ CREATE TABLE topic_likes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (topic_id, user_id),
     FOREIGN KEY (topic_id) REFERENCES topics(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -376,7 +376,7 @@ CREATE TABLE reply_likes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (reply_id, user_id),
     FOREIGN KEY (reply_id) REFERENCES topic_replies(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -412,7 +412,7 @@ CREATE TABLE topic_views (
     user_id BIGINT NULL,
     viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -449,7 +449,7 @@ CREATE TABLE bookmark_topics (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (topic_id, user_id),
     FOREIGN KEY (topic_id) REFERENCES topics(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -486,7 +486,7 @@ CREATE TABLE topic_reports (
     reason VARCHAR(800),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics(id),
-    FOREIGN KEY (reported_by) REFERENCES users(id)
+    FOREIGN KEY (reported_by) REFERENCES cm_users(id)
 );
 ```
 
@@ -523,7 +523,7 @@ CREATE TABLE reply_reports (
     reason VARCHAR(800),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reply_id) REFERENCES topic_replies(id),
-    FOREIGN KEY (reported_by) REFERENCES users(id)
+    FOREIGN KEY (reported_by) REFERENCES cm_users(id)
 );
 ```
 
@@ -633,7 +633,7 @@ CREATE TABLE user_activity_stats (
     topics_solved INT DEFAULT 0,
     likes_received INT DEFAULT 0,
     conversations_joined INT DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -667,7 +667,7 @@ CREATE TABLE user_points (
     points INT DEFAULT 0,
     batch VARCHAR(200),
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 ```
 
@@ -709,8 +709,8 @@ CREATE TABLE notifications (
     type ENUM('LIKE','REPLY','MENTION','BEST_ANSWER','REPORT'),
     is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (receiver_id) REFERENCES users(id),
-    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES cm_users(id),
+    FOREIGN KEY (sender_id) REFERENCES cm_users(id),
     FOREIGN KEY (topic_id) REFERENCES topics(id),
     FOREIGN KEY (reply_id) REFERENCES topic_replies(id)
 );
@@ -775,6 +775,7 @@ CREATE INDEX idx_topic_stats_views ON topic_stats(total_views);
 | is_email_enabled  | BOOLEAN     | Email toggle   |
 | updated_at        | TIMESTAMP   | Updated date   |
 
+
 ```sql
 CREATE TABLE user_email_preferences (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -784,7 +785,7 @@ CREATE TABLE user_email_preferences (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_user_notification (user_id, notification_type),
     CONSTRAINT fk_uep_user
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 
 ```
@@ -811,6 +812,7 @@ Allows users to control which activity types should trigger email notifications,
 | source      | ENUM         | Source            |
 | created_at  | TIMESTAMP    | Created date      |
 
+
 ```sql
 CREATE TABLE report_issue (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -822,7 +824,7 @@ CREATE TABLE report_issue (
     source ENUM('WEB','MOBILE','ADMIN','API') DEFAULT 'WEB',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_report_issue_user
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 
 ```
@@ -881,6 +883,7 @@ Helps monitor email failures, retries, and debugging notification delivery in pr
 | shared_via  | ENUM        | Platform        |
 | created_at  | TIMESTAMP   | Share date      |
 
+
 ```sql
 CREATE TABLE topic_shares (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -891,7 +894,7 @@ CREATE TABLE topic_shares (
     CONSTRAINT fk_topic_shares_topic
         FOREIGN KEY (topic_id) REFERENCES topics(id),
     CONSTRAINT fk_topic_shares_user
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        FOREIGN KEY (user_id) REFERENCES cm_users(id)
 );
 
 ```
@@ -923,9 +926,9 @@ CREATE TABLE user_blocks (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY uk_blocked_pair (blocked_by, blocked_user),
     CONSTRAINT fk_user_blocks_by
-        FOREIGN KEY (blocked_by) REFERENCES users(id),
+        FOREIGN KEY (blocked_by) REFERENCES cm_users(id),
     CONSTRAINT fk_user_blocks_user
-        FOREIGN KEY (blocked_user) REFERENCES users(id)
+        FOREIGN KEY (blocked_user) REFERENCES cm_users(id)
 );
 
 ```
@@ -951,6 +954,7 @@ Blocked users’ content, replies, and notifications can be hidden for better co
 | reason      | TEXT        | Action reason    |
 | created_at  | TIMESTAMP   | Created date     |
 
+
 ```sql
 CREATE TABLE moderation_logs (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -961,7 +965,7 @@ CREATE TABLE moderation_logs (
     reason TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_moderation_admin
-        FOREIGN KEY (admin_id) REFERENCES users(id)
+        FOREIGN KEY (admin_id) REFERENCES cm_users(id)
 );
 
 ```
@@ -971,6 +975,3 @@ Tracks all admin or moderator actions performed on users, topics, or replies.
 Essential for moderation transparency, audits, and future dispute handling.
 
 ---
-
-
-
