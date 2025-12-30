@@ -11,37 +11,44 @@
 
 `cm_users`
 
+---
+
 ### **Schema (Table Format)**
 
-| Column        | Type         | Description            |
-| ------------- | ------------ | ---------------------- |
-| id            | BIGINT (PK)  | Unique user identifier |
-| username      | VARCHAR(50)  | Unique username        |
-| email         | VARCHAR(100) | Email address          |
-| mobile        | VARCHAR(20)  | Mobile number          |
-| full_name     | VARCHAR(200) | Full name              |
-| password_hash | VARCHAR(255) | Encrypted password     |
-| profile_image | VARCHAR(255) | Profile image          |
-| bio           | TEXT         | User bio               |
-| status        | ENUM         | Account status         |
-| created_at    | TIMESTAMP    | Created date           |
-| updated_at    | TIMESTAMP    | Updated date           |
+| Column         | Type         | Description                                            |
+| -------------- | ------------ | ------------------------------------------------------ |
+| id             | BIGINT (PK)  | Community user identifier                              |
+| public_handle  | VARCHAR(100) | Public community username (used for mentions, tagging) |
+| fk_sts_user_id | BIGINT (FK)  | Reference to `sts_ssrpro.sts_users.user_id`            |
+| email          | VARCHAR(100) | Email address (optional, synced if needed)             |
+| mobile         | VARCHAR(20)  | Mobile number (optional, synced if needed)             |
+| full_name      | VARCHAR(200) | Full name                                              |
+| profile_image  | VARCHAR(255) | Profile image                                          |
+| bio            | TEXT         | User bio                                               |
+| status         | ENUM         | Account status                                         |
+| created_at     | TIMESTAMP    | Created date                                           |
+| updated_at     | TIMESTAMP    | Updated date                                           |
+
+---
 
 ### **Query**
 
 ```sql
 CREATE TABLE cm_users (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    public_handle VARCHAR(100) UNIQUE NOT NULL,
+    fk_sts_user_id BIGINT NOT NULL,
     email VARCHAR(100),
     mobile VARCHAR(20),
     full_name VARCHAR(200),
-    password_hash VARCHAR(255) NOT NULL,
     profile_image VARCHAR(255),
     bio TEXT,
     status ENUM('active','blocked') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_cm_users_sts_users
+        FOREIGN KEY (fk_sts_user_id)
+        REFERENCES sts_ssrpro.sts_users(user_id)
 );
 ```
 
@@ -809,7 +816,7 @@ Allows users to control which activity types should trigger email notifications,
 | category    | VARCHAR(200) | Issue category    |
 | issue       | TEXT         | Issue description |
 | attachment  | VARCHAR(300) | Attachment        |
-| source      | ENUM         | Source            |
+| source      | VARCHAR(300) | Source            |
 | created_at  | TIMESTAMP    | Created date      |
 
 
@@ -821,7 +828,7 @@ CREATE TABLE report_issue (
     category VARCHAR(200),
     issue TEXT NOT NULL,
     attachment VARCHAR(300),
-    source ENUM('WEB','MOBILE','ADMIN','API') DEFAULT 'WEB',
+    source VARCHAR(300),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_report_issue_user
         FOREIGN KEY (user_id) REFERENCES cm_users(id)
