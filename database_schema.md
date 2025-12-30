@@ -5,6 +5,10 @@
 
 ---
 
+## **DATABASE**
+###**`myboq_community`**
+---
+
 ## **1️⃣ USERS**
 
 ### **Table Name**
@@ -45,10 +49,7 @@ CREATE TABLE cm_users (
     bio TEXT,
     status ENUM('active','blocked') DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    CONSTRAINT fk_cm_users_sts_users
-        FOREIGN KEY (fk_sts_user_id)
-        REFERENCES sts_ssrpro.sts_users(user_id)
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 ```
 
